@@ -1,3 +1,5 @@
+import sys
+
 class Dial:
     def __init__(self, **kwargs):
         self._number = 50
@@ -29,7 +31,7 @@ class Dial:
 if __name__ == '__main__':
     dial = Dial()
     password = 0
-    with open("input_1.txt", 'r') as file:
+    with open(sys.argv[1], 'r') as file:
         for line in file:
             if dial.turn(line.strip()) == 0:
                 password += 1
