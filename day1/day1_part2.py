@@ -21,35 +21,38 @@ class Dial:
     @position.setter
     def position(self, position: int) -> None:
         self._position = position
+    
+    def turn_right(self) -> int:
+        if self.position == 99:
+            self.password += 1
+            self.position = 0
+            return self.position
+        self.position += 1
+        return self.position
 
-    def turn(self, instruction: str) -> int:
+
+    def turn_left(self) -> int:
+        if self.position == 1:
+            self.password += 1
+            self.position = 0
+            return self.position
+        if self.position == 0:
+            self.position = 99
+            return self.position
+        self.position -= 1
+        return self.position
+        
+
+    def turn(self, instruction: str) -> None:
         number = int(instruction[1::])
         print(f"initial pos {self.position} instruction {instruction} turn {number} pass {self.password}")
         if instruction[0] == 'R':
-            turns = (number+self.position) / 100
-            pos = (number+self.position) % 100
+            for i in range(number):
+                pos = self.turn_right()
         else:
-            turns = (self.position-number) / 100
-            print(f"turns {turns}")
-            pos = int(math.modf(turns)[0]*100)
-            print(f"new pos {pos}")
-            if self.position == number:
-                pos = 0
-                self.password += 1
-                print(f"password after zero {self.password}")
-            if turns < 0 and abs(int(turns)) < 1 and self.position != 0:
-                self.password += 1
-            if turns < 0 and self.position != 0:
-                pos = 100 + int(math.modf(turns)[0]*100)
-            elif turns < 0:
-                pos = 100 + int(math.modf(turns)[0]*100)
-        print(f"pos {pos} turns {abs(int(turns))} password {self.password}")
-        if abs(int(turns)) > 0:
-            self.password += abs(int(turns))
-            print(f"password after {int(turns)} pass {self.password}")
-        self.position = pos
+            for i in range(number):
+                pos = self.turn_left()
         print(f"final pos {pos} pass {self.password}")
-        return turns
 
 if __name__ == '__main__':
     dial = Dial()
