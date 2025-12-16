@@ -1,0 +1,42 @@
+import sys
+
+def make_calculations(data: str) -> int:
+    operands = []
+    operators = []
+    with open(data, 'r') as file:
+        for line in file:
+            if line.strip().split()[0] != '+' and line.strip().split()[0] != '*': 
+                operands.append(line[:len(line)-1:])
+            else:
+                operators = line.strip().split()
+    
+    results = [1 if x == '*' else 0 for x in operators]
+    print(operators)    
+    operand_stack = []
+    result_index = len(results) - 1
+    for x in range(len(operands[0])-1, -1, -1):
+        print("result_index", result_index)
+        new_num = ""
+        for y in range(len(operands)):
+            if operands[y][x] != " ":
+                new_num += operands[y][x]
+        print(f"new_num: '{new_num}'")
+        if new_num != "" and " " not in new_num:
+            operand_stack.append(int(new_num))
+            print("appended to operand stack", int(new_num))
+        if new_num == "" and y == len(operands)-1:
+            print("operand stack",operand_stack)
+            if operators[result_index] == '+':
+                for number in operand_stack:
+                    results[result_index] += number
+            else:
+                for number in operand_stack:
+                    results[result_index] *= number
+            print("results", results)
+            operand_stack = []
+            result_index -= 1
+    
+
+if __name__ == '__main__':
+
+    print("Final sum: ", make_calculations(sys.argv[1]))
