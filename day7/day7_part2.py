@@ -16,11 +16,11 @@ def paths(manifold: list, y: int, x: int) -> int:
         if manifold[y][x] == "S":
             manifold[y+1][x] = "|"
             y += 1
-        elif manifold[y][x] == "^" and manifold[y-1][x] == '|':
+        elif manifold[y][x] == "^":
             manifold[y+1][x-1] = "|"
-            left = paths(manifold.copy(), y+1, x-1)
+            left = paths(manifold, y+1, x-1)
             manifold[y+1][x+1] = "|"
-            right = paths(manifold.copy(), y+1, x+1)
+            right = paths(manifold, y+1, x+1)
             return left + right
         elif manifold[y][x] == '|':
             if y + 1 < len(manifold):
