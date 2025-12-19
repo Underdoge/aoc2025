@@ -1,4 +1,5 @@
 import sys
+import time
 
 def read_manifold(data: str) -> list:
     manifold = []
@@ -21,7 +22,7 @@ def read_manifold(data: str) -> list:
 
 def paths(manifold: list, y: int, x: int, path: dict) -> int:
     while y + 1 < len(manifold):
-        if manifold[y][x] == '|' and y + 1 < len(manifold):
+        if manifold[y][x] == '|':
             y += 1
         elif manifold[y][x] == "^":
             if str([y,x]) not in path:
@@ -42,7 +43,10 @@ def count_paths(data: str) -> int:
     for y in range(len(manifold)):
         for x in range(len(manifold[0])):
             if manifold[y][x] == 'S':
+                start_time = time.perf_counter()
                 path_count = paths(manifold, y+1, x, {})
+                end_time = time.perf_counter()
+                print(f"Elapsed time: {(end_time - start_time):.4f} seconds")
                 break
     
     return path_count
