@@ -52,7 +52,7 @@ def multiply_junctions(data: str, connections: int) -> int:
             if junctions[y] != junctions[x]:
                 if str(dist(junctions[y], junctions[x])) not in distances:
                     distances[str(dist(junctions[y], junctions[x]))] = [junctions[y],junctions[x]]
-    sorted_distances = sorted([float(x[0]) for x in distances.items()])
+    sorted_distances = sorted([float(x[0]) for x in distances.items()])[:1000:]
     circuit_index = 0
     for distance in [str(x) for x in sorted_distances]:
         if not junction_in_circuits(distances[distance][0], circuits)[0] and not junction_in_circuits(distances[distance][1], circuits)[0]:
@@ -67,8 +67,7 @@ def multiply_junctions(data: str, connections: int) -> int:
             if not junction_in_circuits(distances[distance][1], circuits)[0]:
                 circuits[junction_in_circuits(distances[distance][0], circuits)[1]].append(distances[distance][1])
     result = 1
-    display_circuits(sorted(circuits, key=len, reverse=True)[:4])
-    for circuit in sorted(circuits, key=len, reverse=True)[:4]:
+    for circuit in sorted(circuits, key=len, reverse=True)[:3]:
         result *= len(circuit)
     return result
 

@@ -1,56 +1,74 @@
 import sys
-import time
+import itertools
 
-def read_manifold(data: str) -> list:
-    manifold = []
-    splits = 0
+
+def display_circuits(circuits: list) -> None:
+    for index, circuit in enumerate(circuits):
+        print(circuit, index)
+
+def read_junction_boxes(data: str) -> list:
+    junctions = []
     with open(data, 'r') as file:
         for line in file:
-            manifold.append(list(line.strip()))
-    for y in range(len(manifold)):
-        for x in range(len(manifold[0])):
-            if manifold[y][x] == "S":
-                manifold[y+1][x] = "|"
-            elif manifold[y][x] == "^" and manifold[y-1][x] == '|':
-                manifold[y+1][x-1] = "|"
-                manifold[y+1][x+1] = "|"
-                splits += 1
-            elif manifold[y][x] == '|':
-                if y+1 < len(manifold) and manifold[y+1][x] == '.':
-                    manifold[y+1][x] = '|'
-    return manifold
+            junctions.append([int(x) for x in line.strip().split(",")])
+    return junctions
 
-def paths(manifold: list, y: int, x: int, path: dict) -> int:
-    while y + 1 < len(manifold):
-        if manifold[y][x] == '|':
-            y += 1
-        elif manifold[y][x] == "^":
-            if str([y,x]) not in path:
-                count = paths(manifold, y+1, x-1, path)
-                count += paths(manifold, y+1, x+1, path)
-                path[str([y,x])] = count
-            else:
-                count = path[str([y,x])]
-            return count
-    return 1
-
-def count_paths(data: str) -> int:
-    manifold = read_manifold(data)
-
-    # for line in manifold:
-    #     print("".join(line))
+def both_junctions_in_different_circuit(junction_a: list, junction_b: list, circuits) -> bool:
     
-    for y in range(len(manifold)):
-        for x in range(len(manifold[0])):
-            if manifold[y][x] == 'S':
-                start_time = time.perf_counter()
-                path_count = paths(manifold, y+1, x, {})
-                end_time = time.perf_counter()
-                print(f"Elapsed time: {(end_time - start_time):.4f} seconds")
+    in_circuit_a, index_a = junction_in_circuits(junction_a, circuits)
+    in_circuit_b, index_b = junction_in_circuits(junction_b, circuits)
+    if in_circuit_a and in_circuit_b and index_a != index_b:
+        circuits[index_a] += circuits[index_b]
+        circuits.pop(index_b)
+        return True
+    return False
+
+def junction_in_circuits(junction: list, circuits: list) -> bool:
+    for index, circuit in enumerate(circuits):
+        if junction in circuit:
+            return True, index
+    return False, 0
+
+def distance_pow2(junction_a: list, junction_b: list) -> int:
+    distance = 0
+    for index, val in enumerate(junction_a):
+        distance += pow(abs(junction_a[index] - junction_b[index]),2)
+    return int(distance)
+
+def multiply_junctions(data: str, connections: int) -> int:
+    circuits = []
+    distances = {}
+    junctions = read_junction_boxes(data)
+    for junc in list(itertools.combinations([index for index, _ in enumerate(junctions)],2)):
+        if str(distance_pow2(junctions[junc[0]], junctions[junc[1]])) not in distances:
+            distances[str(distance_pow2(junctions[junc[0]], junctions[junc[1]]))] = [junc[0],junc[1]]
+    
+    sorted_distances = sorted([int(x[0]) for x in distances.items()])
+    for index, distance in enumerate([str(x) for x in sorted_distances]):
+        print("distance", distance, distances[distance], index)
+    input()
+    circuit_index = 0
+    for index, distance in enumerate([str(x) for x in sorted_distances]):
+        print("distance", distance, distances[distance], index)
+        if not junction_in_circuits(distances[distance][0], circuits)[0] and not junction_in_circuits(distances[distance][1], circuits)[0]:
+            circuits.append([distances[distance][0]])
+            circuits[circuit_index].append(distances[distance][1])
+            circuit_index += 1
+        elif both_junctions_in_different_circuit(distances[distance][0], distances[distance][1], circuits):
+            cable_length = junctions[distances[distance][0]][0] * junctions[distances[distance][1]][0]
+            if len(circuits) == 1:
+                print("breaking")
                 break
-    
-    return path_count
+            circuit_index -= 1
+        else:
+            if not junction_in_circuits(distances[distance][0], circuits)[0]:
+                circuits[junction_in_circuits(distances[distance][1], circuits)[1]].append(distances[distance][0])
+            if not junction_in_circuits(distances[distance][1], circuits)[0]:
+                circuits[junction_in_circuits(distances[distance][0], circuits)[1]].append(distances[distance][1])
+        display_circuits(circuits)
+        input()
+    return cable_length
 
 if __name__ == '__main__':
 
-    print("Path count: ", count_paths(sys.argv[1]))
+    print("Junctions multiplied: ", multiply_junctions(sys.argv[1], 10))
