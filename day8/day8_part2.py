@@ -1,6 +1,4 @@
 import sys
-import itertools
-
 
 def display_circuits(circuits: list) -> None:
     for index, circuit in enumerate(circuits):
@@ -14,7 +12,6 @@ def read_junction_boxes(data: str) -> list:
     return junctions
 
 def both_junctions_in_different_circuit(junction_a: list, junction_b: list, circuits) -> bool:
-    
     in_circuit_a, index_a = junction_in_circuits(junction_a, circuits)
     in_circuit_b, index_b = junction_in_circuits(junction_b, circuits)
     if in_circuit_a and in_circuit_b and index_a != index_b:
@@ -39,36 +36,30 @@ def multiply_junctions(data: str, connections: int) -> int:
     circuits = []
     distances = {}
     junctions = read_junction_boxes(data)
-    for junc in list(itertools.combinations([index for index, _ in enumerate(junctions)],2)):
-        if str(distance_pow2(junctions[junc[0]], junctions[junc[1]])) not in distances:
-            distances[str(distance_pow2(junctions[junc[0]], junctions[junc[1]]))] = [junc[0],junc[1]]
-    
+    for y in range(len(junctions)):
+        for x in range(len(junctions)):
+            if y != x:
+                distances[str(distance_pow2(junctions[y], junctions[x]))] = [junctions[y],junctions[x]]
+
     sorted_distances = sorted([int(x[0]) for x in distances.items()])
-    for index, distance in enumerate([str(x) for x in sorted_distances]):
-        print("distance", distance, distances[distance], index)
-    input()
     circuit_index = 0
     for index, distance in enumerate([str(x) for x in sorted_distances]):
-        print("distance", distance, distances[distance], index)
         if not junction_in_circuits(distances[distance][0], circuits)[0] and not junction_in_circuits(distances[distance][1], circuits)[0]:
             circuits.append([distances[distance][0]])
             circuits[circuit_index].append(distances[distance][1])
             circuit_index += 1
         elif both_junctions_in_different_circuit(distances[distance][0], distances[distance][1], circuits):
-            cable_length = junctions[distances[distance][0]][0] * junctions[distances[distance][1]][0]
-            if len(circuits) == 1:
-                print("breaking")
-                break
             circuit_index -= 1
         else:
             if not junction_in_circuits(distances[distance][0], circuits)[0]:
                 circuits[junction_in_circuits(distances[distance][1], circuits)[1]].append(distances[distance][0])
             if not junction_in_circuits(distances[distance][1], circuits)[0]:
                 circuits[junction_in_circuits(distances[distance][0], circuits)[1]].append(distances[distance][1])
-        display_circuits(circuits)
-        input()
+        cable_length = distances[distance][0][0] * distances[distance][1][0]
+        if len(circuits) == 1 and len(circuits[0]) == len(junctions):
+            break
     return cable_length
 
 if __name__ == '__main__':
 
-    print("Junctions multiplied: ", multiply_junctions(sys.argv[1], 10))
+    print("Last junctions multiplied: ", multiply_junctions(sys.argv[1], 10))
