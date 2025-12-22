@@ -43,7 +43,7 @@ def junction_in_circuits(junction: list, circuits: list) -> bool:
             return True, index
     return False, 0
 
-def multiply_junctions(data: str, connections: int) -> int:
+def multiply_junctions(data: str) -> int:
     circuits = []
     distances = {}
     junctions = read_junction_boxes(data)

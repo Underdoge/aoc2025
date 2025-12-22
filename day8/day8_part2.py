@@ -32,7 +32,7 @@ def distance_pow2(junction_a: list, junction_b: list) -> int:
         distance += pow(abs(junction_a[index] - junction_b[index]),2)
     return int(distance)
 
-def multiply_junctions(data: str, connections: int) -> int:
+def multiply_junctions(data: str) -> int:
     circuits = []
     distances = {}
     junctions = read_junction_boxes(data)

@@ -7,7 +7,7 @@ def read_red_tiles(data: str) -> list:
             tiles.append([int(x) for x in line.strip().split(",")])
     return tiles
 
-def find_biggest_rectange(data: str, connections: int) -> int:
+def find_biggest_rectange(data: str) -> int:
     circuits = []
     distances = {}
     tiles = read_red_tiles(data)
@@ -22,4 +22,4 @@ def find_biggest_rectange(data: str, connections: int) -> int:
 
 if __name__ == '__main__':
 
-    print("Area of biggest rectangle: ", find_biggest_rectange(sys.argv[1], 10))
+    print("Area of biggest rectangle: ", find_biggest_rectange(sys.argv[1]))
