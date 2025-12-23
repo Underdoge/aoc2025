@@ -1,5 +1,6 @@
 import sys
 import itertools
+import numpy as np
 import time
 
 def all_button_combinations(buttons: list) -> list:
@@ -10,10 +11,10 @@ def all_button_combinations(buttons: list) -> list:
 
 def mod2(combination: list, answer: list) -> bool:
     if len(combination) > 1:
-        result = [s % 2 for s in map(sum, zip(*combination))]
+        result = sum(combination) % 2
     else:
         result = combination[0]
-    return answer == result
+    return np.array_equal(answer, result)
 
 def read_diagrams(data: str) -> list:
     diagrams = []
@@ -30,7 +31,7 @@ def read_diagrams(data: str) -> list:
                     button = [int(x) for x in list("0"*len(answer))]
                     for val in operand[1:-1:].split(","):
                         button[int(val)] = 1
-                    buttons.append(button)
+                    buttons.append(np.array(button))
             all_combinations = all_button_combinations(buttons)
             all_combinations.pop(0)
             winning_combinations = []
@@ -42,7 +43,6 @@ def read_diagrams(data: str) -> list:
                         break
             
             winning_combinations = sorted(winning_combinations, key=len)
-            # if shortest answer in the first set of combinations
             if len(winning_combinations) > 0 and len(winning_combinations[0]) <= 2:
                 continue
             
@@ -53,11 +53,10 @@ def read_diagrams(data: str) -> list:
             for combination in second_combination:
                 if mod2(combination, answer):
                     winning_combinations.append(combination)
-                    # quit when the first answer is found in the second set of combinations
                     break
             winning_combinations = sorted(winning_combinations, key=len)
             sum_shortest += len(winning_combinations[0])
-        print("elapsed time", time.perf_counter() - start_time)
+        print("elapsed time:", time.perf_counter() - start_time)
         return sum_shortest
 
 if __name__ == '__main__':
