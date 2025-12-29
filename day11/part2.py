@@ -1,10 +1,10 @@
 import sys
 
-def paths(instructions: dict, idx: int, visited: set = None, memo: dict = None) -> int:
+def paths(instructions: dict, idx: int, visited: set = None, all_paths: dict = None) -> int:
     if visited is None:
         visited = set()
-    if memo is None:
-        memo = {}
+    if all_paths is None:
+        all_paths = {}
     
     ins_list = list(instructions.keys())
     current_node = ins_list[idx]
@@ -14,24 +14,23 @@ def paths(instructions: dict, idx: int, visited: set = None, memo: dict = None) 
     
     visited.add(current_node)
     
-    memo_key = (current_node, "dac" in visited, "fft" in visited)
-    if memo_key in memo:
-        return memo[memo_key]
+    node = (current_node, "dac" in visited, "fft" in visited)
+    if node in all_paths:
+        return all_paths[node]
     
     if instructions[ins_list[idx]][0] != 'out':
-        count = 0
-        count += paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), visited.copy(), memo)
+        count = paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), visited.copy(), all_paths)
         if len(instructions[ins_list[idx]]) > 1:
             for output in instructions[ins_list[idx]][1:]:
-                count += paths(instructions, ins_list.index(output), visited.copy(), memo)
-        memo[memo_key] = count
+                count += paths(instructions, ins_list.index(output), visited.copy(), all_paths)
+        all_paths[node] = count
         return count
     else:
         if "dac" in visited and "fft" in visited:
-            memo[memo_key] = 1
+            all_paths[node] = 1
             return 1
         else:
-            memo[memo_key] = 0
+            all_paths[node] = 0
             return 0
 
 def read_instructions(data: str) -> list:
