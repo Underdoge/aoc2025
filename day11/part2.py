@@ -1,21 +1,38 @@
 import sys
 
-def paths(instructions: dict, idx: int, path: dict) -> int:
+def paths(instructions: dict, idx: int, visited: set = None, memo: dict = None) -> int:
+    if visited is None:
+        visited = set()
+    if memo is None:
+        memo = {}
+    
     ins_list = list(instructions.keys())
-    #print(ins_list[idx], instructions[ins_list[idx]], path)
+    current_node = ins_list[idx]
+    
+    if current_node in visited:
+        return 0
+    
+    visited.add(current_node)
+    
+    memo_key = (current_node, "dac" in visited, "fft" in visited)
+    if memo_key in memo:
+        return memo[memo_key]
+    
     if instructions[ins_list[idx]][0] != 'out':
-        if ins_list[idx] not in path:
-            count = paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), path)
-            if len(instructions[ins_list[idx]]) > 1:
-                for output in instructions[ins_list[idx]][1:]:
-                    count += paths(instructions, ins_list.index(output), path)
-            path[ins_list[idx]] = count
-        else:
-            count = path[ins_list[idx]]
-        print(path)
+        count = 0
+        count += paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), visited.copy(), memo)
+        if len(instructions[ins_list[idx]]) > 1:
+            for output in instructions[ins_list[idx]][1:]:
+                count += paths(instructions, ins_list.index(output), visited.copy(), memo)
+        memo[memo_key] = count
         return count
     else:
-        return 1
+        if "dac" in visited and "fft" in visited:
+            memo[memo_key] = 1
+            return 1
+        else:
+            memo[memo_key] = 0
+            return 0
 
 def read_instructions(data: str) -> list:
     instructions = {}
@@ -33,7 +50,7 @@ def get_all_paths(data: str) -> int:
         if key == "svr":
             print("found", index)
             idx = index
-    return paths(instructions, idx, {})
+    return paths(instructions, idx, None, {})
 
 if __name__ == '__main__':
 
