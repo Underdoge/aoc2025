@@ -47,7 +47,6 @@ def get_all_paths(data: str) -> int:
     idx = 0
     for index, key in enumerate(list(instructions.keys())):
         if key == "svr":
-            print("found", index)
             idx = index
     return paths(instructions, idx, None, {})
 
