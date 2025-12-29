@@ -2,8 +2,8 @@ import sys
 
 def paths(instructions: dict, idx: int, path: dict) -> int:
     ins_list = list(instructions.keys())
-    print(ins_list[idx], instructions[ins_list[idx]], path)
-    if instructions[ins_list[idx]][0] != 'out' and "dac" not in path and "fft" not in path:
+    #print(ins_list[idx], instructions[ins_list[idx]], path)
+    if instructions[ins_list[idx]][0] != 'out':
         if ins_list[idx] not in path:
             count = paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), path)
             if len(instructions[ins_list[idx]]) > 1:
@@ -11,16 +11,11 @@ def paths(instructions: dict, idx: int, path: dict) -> int:
                     count += paths(instructions, ins_list.index(output), path)
             path[ins_list[idx]] = count
         else:
-            print("already went")
             count = path[ins_list[idx]]
+        print(path)
         return count
     else:
-        path[ins_list[idx]] = "out"
-        print("path", path)
-        if "dac" in path and "fft" in path:
-            return 1
-        else:
-            return 0
+        return 1
 
 def read_instructions(data: str) -> list:
     instructions = {}
