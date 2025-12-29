@@ -1,0 +1,39 @@
+import sys
+
+def paths(instructions: dict, idx: int, path: dict) -> int:
+    ins_list = list(instructions.keys())
+    if instructions[ins_list[idx]][0] != 'out':
+        if ins_list[idx] not in path:
+            count = paths(instructions, ins_list.index(instructions[ins_list[idx]][0]), path)
+            if len(instructions[ins_list[idx]]) > 1:
+                for output in instructions[ins_list[idx]][1:]:
+                    count += paths(instructions, ins_list.index(output), path)
+            path[ins_list[idx]] = count
+        else:
+            count = path[ins_list[idx]]
+        return count
+    else:
+        return 1
+
+def read_instructions(data: str) -> list:
+    instructions = {}
+    with open(data, 'r') as file:
+        for line in file:
+            instruction = line.strip().split(" ")
+            instructions[instruction[0][:-1:]] = [x for x in instruction[1:]]
+
+    return instructions
+
+def get_all_paths(data: str) -> int:
+    instructions = read_instructions(data)
+    idx = 0
+    for index, key in enumerate(list(instructions.keys())):
+        if key == "you":
+            idx = index
+
+    return paths(instructions, idx, {})
+
+if __name__ == '__main__':
+
+    print("Different paths: ", get_all_paths(sys.argv[1]))
+
