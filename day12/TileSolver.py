@@ -93,9 +93,9 @@ class TileSolver(object):
     def hasSolution(self, board, tiles, numTiles, placement = 1):
         rows = len(board)
         cols = len(board[0])
-        for line in board:
-            print(line)
-        print("")
+        # for line in board:
+        #     print(line)
+        # print("")
         
         # If all tiles have been placed, we've found a valid solution
         if all(n == 0 for n in numTiles):
@@ -123,7 +123,6 @@ class TileSolver(object):
                                 result = self.hasSolution(board2, tiles, numTiles2, placement + 1)
                                 if result:
                                     #Store this part of the solution
-                                    print("solution")
                                     self.solution.append({
                                         "row": row,
                                         "col": col + colOffset,
@@ -288,6 +287,7 @@ def printMatrix(mat):
     print("===========================================================")
     for row in mat:
         for item in row:
-            print("\t%s" %(item), end="")
-        print("\n")
+            print(" %s" %(item), end="")
+        print("")
+        # print("\n")
     print("===========================================================")

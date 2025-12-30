@@ -26,17 +26,18 @@ def fit_test(shapes: list, region: dict) -> bool:
     else:
         cols = dimensions[0]
         rows = dimensions[1]
-    for line in available:
-        print(line.tile)
-    print("number", num)
+
     problem = TileSolver.TileSolver(
         boardRows = rows,
         boardCols = cols,
         tiles = available, 
         numTiles = num 
     )
-    print(problem.solveProblem())
-    return problem.solveProblem()
+    if problem.solveProblem():
+        print("Found solution: ")
+        TileSolver.printMatrix(problem.solutionBoard)
+        return True
+    return False
 
 def region_size(region: dict) -> list:
     for idx, size in enumerate(region.keys()):
@@ -60,11 +61,6 @@ def read_instructions(data: str) -> (list, list):
             elif line != "\n":
                 regions.append({line.strip()[:line.index(":")] : [int(x) for x in line.strip()[line.index(":")+2:].split(" ")]})
 
-    for shape in shapes:
-        for line in shape:
-            print(line)
-        print("")
-
     fit_number = 0
 
     for region in regions:
@@ -80,3 +76,4 @@ if __name__ == '__main__':
 
     print("How many fit: ", test_presents(sys.argv[1]))
 
+# 550 too high
