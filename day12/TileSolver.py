@@ -120,7 +120,8 @@ class TileSolver(object):
                                 board2 = self.placeTile(board, tile, row, col + colOffset, placement)
                                 numTiles2 = copy.deepcopy(numTiles)
                                 numTiles2[tileNumber] -= 1 #We placed the tile, so it is no longer available
-                                if self.hasSolution(board2, tiles, numTiles2, placement + 1):
+                                result = self.hasSolution(board2, tiles, numTiles2, placement + 1)
+                                if result:
                                     #Store this part of the solution
                                     print("solution")
                                     self.solution.append({
@@ -130,8 +131,15 @@ class TileSolver(object):
                                         "rotation": rot
                                     })
                                     return True
+                                else:
+                                    # If this was the very first placement, and exploring
+                                    # all subsequent placements failed, stop trying other
+                                    # locations for the first tile and give up early.
+                                    if placement == 1:
+                                        return False
                     #Rotate tile for next try
                     tile = Tile.rotateTile(tile)
+
         
         return False #There is no tile placement that can lead to a solution
 
