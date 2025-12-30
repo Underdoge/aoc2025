@@ -43,7 +43,7 @@ def region_size(region: dict) -> list:
     for idx, size in enumerate(region.keys()):
         return [int(x) for x in size.split("x")]
 
-def read_instructions(data: str) -> (list, list):
+def test_presents(data: str) -> (list, list):
     shapes = []
     shape_count = 6
     regions = []
@@ -65,12 +65,7 @@ def read_instructions(data: str) -> (list, list):
 
     for region in regions:
         fit_number += 1 if fit_test(shapes, region) else 0
-        print("fit number", fit_number)
-        input()
-    return shapes, regions
-
-def test_presents(data: str) -> int:
-    shapes, regions = read_instructions(data)
+    return fit_number
 
 if __name__ == '__main__':
 
