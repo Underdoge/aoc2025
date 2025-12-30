@@ -1,4 +1,5 @@
 import sys
+import TileSolver
 
 def available_shapes(shapes: list, region: dict) -> (list, list):
     available = []
@@ -9,24 +10,33 @@ def available_shapes(shapes: list, region: dict) -> (list, list):
                 tile_lines = []
                 for line in shapes[idx]:
                     tile_lines.append([1 if x == '#' else 0 for x in line])
-                available.append(tile_lines)
+                class WeirdTile(TileSolver.Tile):
+                    tile = tile_lines
+                    uniqueRotations = 2 if idx == 2 or idx == 5 else 4
+                available.append(WeirdTile)
                 available_num.append(number)
     return available, available_num
 
-def real_area(shape: list) -> int:
-    area = 0
-    for line in shape:
-        for block in line:
-            area += block
-    return area
-
 def fit_test(shapes: list, region: dict) -> bool:
     available, num = available_shapes(shapes, region)
-    shapes_area = 0
-    for idx, shape in enumerate(available):
-        shapes_area += num[idx]*real_area(shape)
     dimensions = region_size(region)
-    return shapes_area < dimensions[0]*dimensions[1]
+    if dimensions[0] != dimensions[1]:
+        cols = dimensions[0] if dimensions[0] > dimensions[1] else dimensions[1]
+        rows = dimensions[0] if dimensions[0] < dimensions[1] else dimensions[1]
+    else:
+        cols = dimensions[0]
+        rows = dimensions[1]
+
+    problem = TileSolver.TileSolver(
+        boardRows = rows,
+        boardCols = cols,
+        tiles = available, 
+        numTiles = num 
+    )
+    if problem.solveProblem():
+        print("Found solution: ")
+        TileSolver.printMatrix(problem.solutionBoard)
+        return True
     return False
 
 def region_size(region: dict) -> list:
@@ -61,3 +71,4 @@ if __name__ == '__main__':
 
     print("How many fit: ", test_presents(sys.argv[1]))
 
+# 550 too high
