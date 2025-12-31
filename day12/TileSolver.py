@@ -118,6 +118,8 @@ class TileSolver(object):
                                 if placement > 1 and not self.isAdjacentToPlaced(board, tile, row, col + colOffset):
                                     continue
                                 board2 = self.placeTile(board, tile, row, col + colOffset, placement)
+                                printMatrix(board2)
+                                input()
                                 numTiles2 = copy.deepcopy(numTiles)
                                 numTiles2[tileNumber] -= 1 #We placed the tile, so it is no longer available
                                 if self.hasSolution(board2, tiles, numTiles2, placement + 1):
@@ -281,6 +283,6 @@ def printMatrix(mat):
     print("===========================================================")
     for row in mat:
         for item in row:
-            print(" %s" %(item), end="")
+            print(chr(item%55+64), end="")
         print("")
     print("===========================================================")
