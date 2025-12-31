@@ -27,7 +27,6 @@ def fit_test(shapes: list, region: dict) -> bool:
         shapes_area += num[idx]*real_area(shape)
     dimensions = region_size(region)
     return shapes_area <= dimensions[0]*dimensions[1]
-    return False
 
 def region_size(region: dict) -> list:
     for idx, size in enumerate(region.keys()):
